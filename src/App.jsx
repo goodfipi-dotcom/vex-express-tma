@@ -16,22 +16,18 @@ export default function App() {
     tg.ready()
     tg.expand()
     tg.setHeaderColor('#05060D')
-    tg.setBackgroundColor('#05060D')
+    tg.setBackgroundColor('#000000')
     tg.disableVerticalSwipes?.()
 
-    // Попросим у Telegram полноэкранный режим, если поддерживается (Bot API 8.0+)
     try {
       tg.requestFullscreen?.()
-    } catch { /* не критично */ }
+    } catch { /* ок */ }
   }, [])
 
   return (
-    <div className="min-h-screen bg-bg max-w-lg mx-auto relative safe-x">
-      {/* Верхний safe-area для iPhone-челки */}
+    <div className="app-shell">
       <div className="safe-top" />
 
-      {/* Ключ по pathname заставляет React перерисовать контент страницы
-          с анимацией fade-in-up, которая задана в CSS корневого div страниц. */}
       <div key={location.pathname} className="animate-fade-in">
         <Routes location={location}>
           <Route path="/" element={<Home />} />

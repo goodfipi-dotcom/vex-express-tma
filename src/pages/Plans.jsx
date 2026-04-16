@@ -10,7 +10,7 @@ export default function Plans() {
   const [busyPlanId, setBusyPlanId] = useState(null)
 
   async function handleBuy(plan) {
-    if (busyPlanId) return // защита от двойных кликов
+    if (busyPlanId) return
 
     setBusyPlanId(plan.id)
     window.Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('medium')
@@ -22,8 +22,7 @@ export default function Plans() {
         window.Telegram.WebApp.openInvoice(invoice_url, async (status) => {
           if (status === 'paid') {
             window.Telegram.WebApp.HapticFeedback?.notificationOccurred?.('success')
-            // Авто-рефреш: подтягиваем новый статус, чтобы Home увидел VPN активным
-            try { await getUserStatus() } catch { /* проигнорируем */ }
+            try { await getUserStatus() } catch { /* ок */ }
             window.Telegram.WebApp.showAlert('Оплата прошла. VPN подключён ⚡')
             navigate('/')
           } else if (status === 'failed') {
@@ -43,18 +42,16 @@ export default function Plans() {
   }
 
   return (
-    <div className="px-5 pt-6 pb-28 animate-fade-in-up">
-      {/* Заголовок */}
+    <div className="px-5 pt-8 pb-36 animate-fade-in-up">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white tracking-tight mb-1">
+        <h2 className="text-[28px] font-bold text-white tracking-tight leading-tight mb-2">
           Выберите тариф
         </h2>
         <p className="text-text-dim text-sm">
-          Один VPN — все устройства. Без лимитов, без рекламы.
+          Один VPN — все устройства. Без лимитов и рекламы.
         </p>
       </div>
 
-      {/* Карточки тарифов */}
       <div className="space-y-4 mb-5">
         {PLANS.map((plan) => (
           <PlanCard
@@ -67,29 +64,24 @@ export default function Plans() {
         ))}
       </div>
 
-      {/* Гарантия безопасности */}
-      <div className="bg-surface/60 backdrop-blur-sm rounded-2xl border border-border-soft p-4 flex items-start gap-3 mb-3">
-        <div className="w-9 h-9 rounded-xl bg-neon/15 border border-neon/30 flex items-center justify-center shrink-0">
-          <ShieldCheckIcon className="w-4.5 h-4.5 text-neon" />
+      <div className="card-glass p-4 flex items-start gap-3 mb-3">
+        <div className="w-10 h-10 rounded-xl bg-neon/15 border border-neon/30 flex items-center justify-center shrink-0">
+          <ShieldCheckIcon className="w-5 h-5 text-neon" />
         </div>
         <div>
-          <p className="text-white text-sm font-semibold mb-0.5">
-            Оплата через Telegram
-          </p>
+          <p className="text-white text-sm font-semibold mb-0.5">Оплата через Telegram</p>
           <p className="text-text-dim text-xs leading-relaxed">
             VPN активируется сразу после оплаты. Без подписок и автосписаний.
           </p>
         </div>
       </div>
 
-      <div className="bg-surface/60 backdrop-blur-sm rounded-2xl border border-border-soft p-4 flex items-start gap-3">
-        <div className="w-9 h-9 rounded-xl bg-electric/15 border border-electric/30 flex items-center justify-center shrink-0">
-          <CreditCardIcon className="w-4.5 h-4.5 text-electric" />
+      <div className="card-glass p-4 flex items-start gap-3">
+        <div className="w-10 h-10 rounded-xl bg-electric/15 border border-electric/30 flex items-center justify-center shrink-0">
+          <CreditCardIcon className="w-5 h-5 text-electric" />
         </div>
         <div>
-          <p className="text-white text-sm font-semibold mb-0.5">
-            Любой способ оплаты
-          </p>
+          <p className="text-white text-sm font-semibold mb-0.5">Любой способ оплаты</p>
           <p className="text-text-dim text-xs leading-relaxed">
             Картой, Telegram Stars или СБП. Мгновенная активация.
           </p>

@@ -29,7 +29,7 @@
   --color-lime: #39FF14;
   --color-lime-dim: #10B981;
 
-  /* ─── Алиасы accent = neon (совместимость) ─── */
+  /* ─── Алиасы ─── */
   --color-accent: #A855F7;
   --color-accent-hover: #C084FC;
   --color-accent-dim: #7C3AED;
@@ -37,16 +37,6 @@
   --color-success-hover: #6EFF4A;
   --color-danger: #FF3E5E;
   --color-warning: #FFB800;
-
-  /* Legacy алиасы */
-  --color-dark-900: #05060D;
-  --color-dark-800: #0F1124;
-  --color-dark-700: #151834;
-  --color-dark-600: #1D2147;
-  --color-indigo-500: #A855F7;
-  --color-indigo-400: #C084FC;
-  --color-indigo-600: #7C3AED;
-  --color-indigo-900: #5B21B6;
 }
 
 * {
@@ -58,27 +48,125 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
-  background-color: #05060D;
+html, body, #root {
   color: #F1F5F9;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
   letter-spacing: -0.01em;
+  min-height: 100vh;
 }
 
-/* Градиентный фон с виньеткой — создаёт глубину */
-body {
+/* Чёрный фон снаружи контейнера (виден на десктопе) */
+html, body {
+  background-color: #000;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: #000;
+}
+
+/* ═══════════ СТРОГИЙ МОБИЛЬНЫЙ КОНТЕЙНЕР ═══════════ */
+/*
+ * Главное правило нового дизайна: приложение не растягивается.
+ * Ширина всегда 400px (на десктопе), на мобильном — на всю ширину экрана.
+ */
+.app-shell {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  min-height: 100vh;
+  overflow: hidden;
+  /* Глубокий градиент с неоновой подсветкой по углам */
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(168, 85, 247, 0.12), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0, 217, 255, 0.06), transparent 60%),
-    #05060D;
-  background-attachment: fixed;
+    radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.22), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(0, 217, 255, 0.14), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(168, 85, 247, 0.16), transparent 55%),
+    linear-gradient(180deg, #07081A 0%, #05060D 50%, #03040A 100%);
+}
+
+/* На широком экране — тонкая неоновая граница и тень, чтобы казалось «премиальным телефоном» */
+@media (min-width: 480px) {
+  .app-shell {
+    border-radius: 32px;
+    margin: 24px 0;
+    min-height: calc(100vh - 48px);
+    box-shadow:
+      0 0 0 1px rgba(168, 85, 247, 0.2),
+      0 30px 80px rgba(0, 0, 0, 0.8),
+      0 0 120px rgba(168, 85, 247, 0.15);
+  }
 }
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #252A52; border-radius: 3px; }
+
+/* ═══════════ СТЕКЛЯННЫЕ КАРТОЧКИ (GLASSMORPHISM) ═══════════ */
+
+/* Основная стеклянная карточка — как у Ultima */
+.card-glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+}
+
+.card-glass-strong {
+  position: relative;
+  background: rgba(15, 17, 36, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(168, 85, 247, 0.18);
+  border-radius: 24px;
+}
+
+/* Карточка с неоновой градиентной рамкой */
+.card-neon {
+  position: relative;
+  background: rgba(15, 17, 36, 0.55);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: 24px;
+}
+.card-neon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.7), rgba(0, 217, 255, 0.35) 50%, rgba(168, 85, 247, 0.55));
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ═══════════ FLOATING PILL NAVBAR ═══════════ */
+
+.nav-pill {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 360px;
+  z-index: 50;
+  padding: 8px;
+  border-radius: 9999px;
+  background: rgba(10, 11, 25, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(168, 85, 247, 0.15);
+}
 
 /* ═══════════ НЕОНОВЫЕ ЭФФЕКТЫ ═══════════ */
 
@@ -91,16 +179,16 @@ body {
 
 .neon-glow-strong {
   box-shadow:
-    0 0 16px rgba(168, 85, 247, 0.7),
-    0 0 48px rgba(168, 85, 247, 0.4),
-    0 0 120px rgba(168, 85, 247, 0.2);
+    0 0 20px rgba(168, 85, 247, 0.8),
+    0 0 60px rgba(168, 85, 247, 0.5),
+    0 0 140px rgba(168, 85, 247, 0.3);
 }
 
 .neon-glow-lime {
   box-shadow:
-    0 0 14px rgba(57, 255, 20, 0.55),
-    0 0 48px rgba(57, 255, 20, 0.3),
-    0 0 100px rgba(57, 255, 20, 0.15);
+    0 0 20px rgba(57, 255, 20, 0.7),
+    0 0 60px rgba(57, 255, 20, 0.4),
+    0 0 140px rgba(57, 255, 20, 0.2);
 }
 
 .neon-glow-electric {
@@ -121,15 +209,14 @@ body {
     0 0 28px rgba(57, 255, 20, 0.35);
 }
 
-/* Legacy алиасы для старых классов */
-.glow-accent { box-shadow: 0 0 14px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2); }
+/* Legacy */
+.glow-accent  { box-shadow: 0 0 14px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2); }
 .glow-success { box-shadow: 0 0 14px rgba(57, 255, 20, 0.55), 0 0 40px rgba(57, 255, 20, 0.25); }
-.glow-indigo { box-shadow: 0 0 14px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2); }
 
 /* ═══════════ ГРАДИЕНТЫ ═══════════ */
 
 .bg-gradient-neon {
-  background: linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #5B21B6 100%);
+  background: linear-gradient(135deg, #C084FC 0%, #A855F7 50%, #7C3AED 100%);
 }
 
 .bg-gradient-lime {
@@ -154,49 +241,45 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.text-gradient-accent { background: linear-gradient(135deg, #C084FC 0%, #A855F7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.text-gradient-success { background: linear-gradient(135deg, #6EFF4A 0%, #39FF14 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+/* ═══════════ КРУГЛЫЕ PILL-КНОПКИ (Ultima style) ═══════════ */
 
-/* ═══════════ ГРАДИЕНТНАЯ РАМКА ═══════════ */
+.btn-pill {
+  width: 100%;
+  height: 56px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.2s ease;
+  letter-spacing: -0.01em;
+}
+.btn-pill:active { transform: scale(0.97); filter: brightness(0.92); }
 
-.neon-border {
-  position: relative;
-  background: linear-gradient(#0F1124, #0F1124) padding-box,
-              linear-gradient(135deg, #A855F7 0%, #00D9FF 100%) border-box;
-  border: 1px solid transparent;
+.btn-pill-primary {
+  background: linear-gradient(135deg, #C084FC 0%, #A855F7 55%, #7C3AED 100%);
+  color: #fff;
+  box-shadow:
+    0 10px 30px rgba(168, 85, 247, 0.45),
+    0 0 40px rgba(168, 85, 247, 0.3);
 }
 
-.card-gradient-border {
-  position: relative;
-  background: #0F1124;
-  border-radius: 20px;
-}
-.card-gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.7) 0%, rgba(0, 217, 255, 0.25) 50%, rgba(168, 85, 247, 0.6) 100%);
-  border-radius: inherit;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+.btn-pill-lime {
+  background: linear-gradient(135deg, #6EFF4A 0%, #39FF14 100%);
+  color: #05060D;
+  box-shadow:
+    0 10px 30px rgba(57, 255, 20, 0.4),
+    0 0 40px rgba(57, 255, 20, 0.25);
 }
 
-/* ═══════════ СТЕКЛЯННАЯ ПОВЕРХНОСТЬ ═══════════ */
-
-.glass {
-  background: rgba(15, 17, 36, 0.75);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-}
-
-.glass-dark {
-  background: rgba(5, 6, 13, 0.85);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+.btn-pill-dark {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: #F1F5F9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ═══════════ АНИМАЦИИ ═══════════ */
@@ -221,61 +304,25 @@ body {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
 
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(16px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-.animate-slide-in-right { animation: slideInRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-
-/* Skeleton shimmer — используется для плейсхолдеров */
 @keyframes skeleton-shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    #151834 0%,
-    #1D2147 50%,
-    #151834 100%
-  );
+  background: linear-gradient(90deg, #151834 0%, #1D2147 50%, #151834 100%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.6s linear infinite;
   border-radius: 8px;
 }
 
-/* Неоновая пульсация — для индикаторов */
 @keyframes neon-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 8px currentColor,
-      0 0 16px currentColor;
-    opacity: 1;
-  }
-  50% {
-    box-shadow:
-      0 0 4px currentColor,
-      0 0 8px currentColor;
-    opacity: 0.7;
-  }
+  0%, 100% { box-shadow: 0 0 8px currentColor, 0 0 16px currentColor; opacity: 1; }
+  50%      { box-shadow: 0 0 4px currentColor, 0 0 8px currentColor; opacity: 0.7; }
 }
 .animate-neon-pulse { animation: neon-pulse 2s ease-in-out infinite; }
 
-/* Медленное вращение (для иконок) */
-@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.animate-spin-slow { animation: spin-slow 8s linear infinite; }
-
-/* Плавание иконок */
-@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 .animate-floaty { animation: floaty 3.5s ease-in-out infinite; }
-
-/* Shimmer для loading overlay */
-@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.15) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
 
 /* ═══════════ ИНТЕРАКЦИИ ═══════════ */
 
@@ -287,26 +334,13 @@ body {
   filter: brightness(0.92);
 }
 
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-1px);
-}
-
 /* ═══════════ SAFE AREA ═══════════ */
 
 .safe-top    { padding-top: env(safe-area-inset-top, 0px); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
-.safe-x      { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 
-/* ═══════════ ТЕМА TELEGRAM ═══════════ */
-/* Принудительно тёмная тема независимо от настроек клиента */
-:root {
-  color-scheme: dark;
-}
+/* ═══════════ ТЕМА ═══════════ */
 
-/* Отключаем iOS zoom при фокусе на input */
-input, textarea, select {
-  font-size: 16px;
-}
+:root { color-scheme: dark; }
+
+input, textarea, select { font-size: 16px; }

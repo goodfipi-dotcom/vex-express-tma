@@ -9,7 +9,6 @@ import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid'
 import { PLATFORMS } from '../api/config'
 import { getUserStatus } from '../api/client'
 
-// Детектим платформу пользователя чтобы сразу раскрыть правильную вкладку
 function detectPlatform() {
   if (typeof navigator === 'undefined') return 'ios'
   const ua = navigator.userAgent || ''
@@ -26,7 +25,6 @@ export default function Guide() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    // Загружаем ключ тихо — если нет подписки, просто спрячем кнопку копирования
     getUserStatus()
       .then((s) => setVlessKey(s?.vless_key || null))
       .catch(() => {})
@@ -55,24 +53,22 @@ export default function Guide() {
       setCopied(true)
       window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred?.('success')
       setTimeout(() => setCopied(false), 2200)
-    } catch {
-      // fallback
-    }
+    } catch { /* ок */ }
   }
 
   return (
-    <div className="px-5 pt-6 pb-28 animate-fade-in-up">
+    <div className="px-5 pt-8 pb-36 animate-fade-in-up">
       {/* Заголовок */}
-      <div className="mb-5">
-        <h2 className="text-2xl font-bold text-white tracking-tight mb-1">
-          Подключение
+      <div className="mb-6">
+        <h2 className="text-[28px] font-bold text-white tracking-tight leading-tight mb-2">
+          Настройка
         </h2>
         <p className="text-text-dim text-sm">
-          Выберите устройство и подключайтесь за 2 минуты
+          Выберите устройство — подключим за 2 минуты.
         </p>
       </div>
 
-      {/* Табы платформ (горизонтальный скролл) */}
+      {/* Табы платформ */}
       <div
         className="flex gap-2 mb-5 overflow-x-auto -mx-5 px-5 pb-1"
         style={{ scrollbarWidth: 'none' }}
@@ -83,10 +79,10 @@ export default function Guide() {
             <button
               key={p.id}
               onClick={() => pickPlatform(p.id)}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 press ${
+              className={`shrink-0 px-5 h-10 rounded-full text-sm font-semibold transition-all duration-200 press ${
                 isActive
                   ? 'bg-gradient-neon text-white neon-glow'
-                  : 'bg-surface border border-border text-text-dim'
+                  : 'bg-white/5 border border-white/10 text-text-dim backdrop-blur-md'
               }`}
             >
               {p.name}
@@ -95,22 +91,14 @@ export default function Guide() {
         })}
       </div>
 
-      {/* Карточка активной платформы */}
-      <div
-        key={active.id}
-        className="bg-surface neon-border rounded-2xl p-5 mb-4 animate-fade-in"
-      >
-        {/* Рекомендуемое приложение */}
-        <p className="text-text-muted text-[10px] font-bold uppercase tracking-[0.15em] mb-3">
-          Шаг 1 · приложение
-        </p>
-
+      {/* Карточка рекомендуемого приложения */}
+      <div key={active.id} className="card-neon p-5 mb-3 animate-fade-in">
         <div className="flex items-center gap-3 mb-4">
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white shrink-0"
+            className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shrink-0"
             style={{
               background: `linear-gradient(135deg, ${active.brand} 0%, ${active.brand}dd 100%)`,
-              boxShadow: `0 0 24px ${active.brand}40, 0 8px 16px ${active.brand}30`,
+              boxShadow: `0 0 24px ${active.brand}55, 0 8px 24px ${active.brand}40`,
             }}
           >
             {active.app.name[0]}
@@ -127,76 +115,74 @@ export default function Guide() {
             </p>
           </div>
         </div>
+      </div>
 
-        <button
-          onClick={openDownload}
-          className="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-neon press neon-glow flex items-center justify-center gap-2 mb-2"
-        >
+      {/* Две pill-кнопки — как на всех экранах Ultima */}
+      <div className="flex flex-col gap-3 mb-6">
+        <button onClick={openDownload} className="btn-pill btn-pill-primary">
           <ArrowDownTrayIcon className="w-5 h-5" />
           {active.app.downloadLabel}
         </button>
+        <button
+          onClick={copyKey}
+          disabled={!vlessKey}
+          className={`btn-pill ${
+            copied
+              ? 'btn-pill-lime'
+              : vlessKey
+                ? 'btn-pill-dark'
+                : 'btn-pill-dark opacity-60 cursor-not-allowed'
+          }`}
+        >
+          {copied ? (
+            <>
+              <ClipboardDocumentCheckIcon className="w-5 h-5" />
+              Ключ скопирован
+            </>
+          ) : vlessKey ? (
+            <>
+              <ClipboardDocumentIcon className="w-5 h-5" />
+              Скопировать VPN-ключ
+            </>
+          ) : (
+            <>
+              <ClipboardDocumentIcon className="w-5 h-5" />
+              Ключ появится после оплаты
+            </>
+          )}
+        </button>
       </div>
 
-      {/* Кнопка копирования ключа */}
-      <button
-        onClick={copyKey}
-        disabled={!vlessKey}
-        className={`w-full py-3.5 rounded-2xl font-semibold text-sm press mb-5 flex items-center justify-center gap-2 transition-all ${
-          vlessKey
-            ? copied
-              ? 'bg-lime/15 border border-lime/40 text-lime'
-              : 'neon-border text-white'
-            : 'bg-surface border border-border text-text-muted cursor-not-allowed'
-        }`}
-      >
-        {copied ? (
-          <>
-            <ClipboardDocumentCheckIcon className="w-5 h-5" />
-            Ключ скопирован — вставьте в {active.app.name}
-          </>
-        ) : vlessKey ? (
-          <>
-            <ClipboardDocumentIcon className="w-5 h-5 text-neon" />
-            Скопировать ключ
-          </>
-        ) : (
-          <>
-            <ClipboardDocumentIcon className="w-5 h-5" />
-            Ключ появится после оплаты
-          </>
-        )}
-      </button>
-
       {/* Пошаговая инструкция */}
-      <p className="text-text-muted text-[10px] font-bold uppercase tracking-[0.15em] mb-3 px-1">
+      <p className="text-text-dim text-xs font-semibold uppercase tracking-[0.14em] mb-3 px-1">
         Шаги подключения
       </p>
 
-      <div className="space-y-3">
+      <div className="card-glass overflow-hidden">
         {active.steps.map((step, i) => {
           const num = i + 1
           const isLast = i === active.steps.length - 1
           return (
             <div
               key={i}
-              className={`flex gap-3 bg-surface rounded-2xl p-4 border ${
-                isLast ? 'border-lime/30' : 'border-border'
+              className={`flex gap-3 px-5 py-4 ${
+                i > 0 ? 'border-t border-white/5' : ''
               }`}
             >
               <div className="shrink-0">
                 {isLast ? (
-                  <div className="w-8 h-8 rounded-full bg-lime/15 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-lime/15 border border-lime/30 flex items-center justify-center">
                     <CheckCircleSolid className="w-5 h-5 text-lime" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-neon/15 border border-neon/40 flex items-center justify-center">
-                    <span className="text-neon text-xs font-bold">{num}</span>
+                  <div className="w-9 h-9 rounded-xl bg-neon/15 border border-neon/30 flex items-center justify-center">
+                    <span className="text-neon text-sm font-bold">{num}</span>
                   </div>
                 )}
               </div>
-              <div className="pt-1 min-w-0 flex-1">
+              <div className="pt-0.5 min-w-0 flex-1">
                 <p
-                  className={`text-sm font-medium mb-0.5 ${
+                  className={`text-sm font-semibold mb-0.5 ${
                     isLast ? 'text-lime' : 'text-white'
                   }`}
                 >
@@ -213,8 +199,8 @@ export default function Guide() {
         })}
       </div>
 
-      {/* Финальный CTA */}
-      <div className="mt-5 flex items-center gap-2 bg-lime/5 border border-lime/20 rounded-2xl p-4">
+      {/* Подсказка про поддержку */}
+      <div className="mt-4 flex items-center gap-2 card-glass p-4">
         <CheckCircleIcon className="w-5 h-5 text-lime shrink-0" />
         <p className="text-text-dim text-xs leading-relaxed">
           Если что-то не получилось — напишите в поддержку. Ответим за 5 минут.

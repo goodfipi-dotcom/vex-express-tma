@@ -10,7 +10,8 @@ export default function ErrorState({ onRetry, message = 'Не удалось п�
       <p className="text-text-dim text-sm max-w-xs mb-6">{message}</p>
       <button
         onClick={onRetry}
-        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-neon hover:bg-neon-hover text-white font-semibold text-sm press neon-glow"
+        className="btn-pill btn-pill-primary"
+        style={{ height: 48, width: 200, fontSize: 14 }}
       >
         <ArrowPathIcon className="w-4 h-4" />
         Повторить
