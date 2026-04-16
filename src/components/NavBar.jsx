@@ -26,8 +26,7 @@ export default function NavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border-soft"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      className="fixed bottom-0 left-0 right-0 z-50 glass-dark border-t border-border-soft safe-bottom"
     >
       <div className="flex justify-around items-center h-[60px] max-w-lg mx-auto px-2">
         {tabs.map(({ to, icon: Icon, iconActive: IconActive, label }) => (
@@ -36,19 +35,29 @@ export default function NavBar() {
             to={to}
             end={to === '/'}
             onClick={onTap}
-            className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl press transition-colors duration-200 ${
-                isActive ? 'text-accent' : 'text-text-muted'
-              }`
-            }
+            className="flex-1 flex justify-center"
           >
             {({ isActive }) => {
               const Comp = isActive ? IconActive : Icon
               return (
-                <>
+                <div
+                  className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl press transition-colors duration-200 ${
+                    isActive ? 'text-neon' : 'text-text-muted'
+                  }`}
+                >
+                  {/* Неоновый индикатор сверху у активной вкладки */}
+                  {isActive && (
+                    <span
+                      className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-full bg-neon"
+                      style={{
+                        boxShadow:
+                          '0 0 8px rgba(168, 85, 247, 0.9), 0 0 16px rgba(168, 85, 247, 0.5)',
+                      }}
+                    />
+                  )}
                   <Comp className="w-[22px] h-[22px]" />
                   <span className="text-[10px] font-medium">{label}</span>
-                </>
+                </div>
               )
             }}
           </NavLink>

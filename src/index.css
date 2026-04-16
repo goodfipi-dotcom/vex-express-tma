@@ -1,41 +1,52 @@
 @import "tailwindcss";
 
 @theme {
-  /* Фон — глубокий тёмный */
-  --color-bg: #0B0F1A;
-  --color-surface: #141925;
-  --color-surface-2: #1D2433;
-  --color-surface-3: #252D3F;
-  --color-border: #2A3347;
-  --color-border-soft: #1F2636;
+  /* ─── Фон ─── */
+  --color-bg: #05060D;
+  --color-bg-2: #0A0C18;
+  --color-surface: #0F1124;
+  --color-surface-2: #151834;
+  --color-surface-3: #1D2147;
+  --color-border: #252A52;
+  --color-border-soft: #1A1E3E;
 
-  /* Текст */
-  --color-text: #F8FAFC;
-  --color-text-dim: #94A3B8;
-  --color-text-muted: #64748B;
+  /* ─── Текст ─── */
+  --color-text: #F1F5F9;
+  --color-text-dim: #A5AACD;
+  --color-text-muted: #6C7199;
 
-  /* Акцент — cyan (VPN-стиль) */
-  --color-accent: #06B6D4;
-  --color-accent-hover: #22D3EE;
-  --color-accent-dim: #0E7490;
+  /* ─── Неоновый акцент (brand) ─── */
+  --color-neon: #A855F7;
+  --color-neon-hover: #C084FC;
+  --color-neon-dim: #7C3AED;
+  --color-neon-deep: #5B21B6;
 
-  /* Успех / подключено */
-  --color-success: #10B981;
-  --color-success-hover: #34D399;
+  /* ─── Электрик-голубой (secondary) ─── */
+  --color-electric: #00D9FF;
+  --color-electric-dim: #0891B2;
 
-  /* Ошибка / отключено */
-  --color-danger: #EF4444;
-  --color-warning: #F59E0B;
+  /* ─── Кислотный зелёный (connected) ─── */
+  --color-lime: #39FF14;
+  --color-lime-dim: #10B981;
 
-  /* Legacy алиасы (для обратной совместимости) */
-  --color-dark-900: #0B0F1A;
-  --color-dark-800: #141925;
-  --color-dark-700: #1D2433;
-  --color-dark-600: #252D3F;
-  --color-indigo-500: #06B6D4;
-  --color-indigo-400: #22D3EE;
-  --color-indigo-600: #0891B2;
-  --color-indigo-900: #0E7490;
+  /* ─── Алиасы accent = neon (совместимость) ─── */
+  --color-accent: #A855F7;
+  --color-accent-hover: #C084FC;
+  --color-accent-dim: #7C3AED;
+  --color-success: #39FF14;
+  --color-success-hover: #6EFF4A;
+  --color-danger: #FF3E5E;
+  --color-warning: #FFB800;
+
+  /* Legacy алиасы */
+  --color-dark-900: #05060D;
+  --color-dark-800: #0F1124;
+  --color-dark-700: #151834;
+  --color-dark-600: #1D2147;
+  --color-indigo-500: #A855F7;
+  --color-indigo-400: #C084FC;
+  --color-indigo-600: #7C3AED;
+  --color-indigo-900: #5B21B6;
 }
 
 * {
@@ -48,144 +59,116 @@
 }
 
 html, body {
-  background-color: #0B0F1A;
-  color: #F8FAFC;
+  background-color: #05060D;
+  color: #F1F5F9;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   letter-spacing: -0.01em;
 }
 
+/* Градиентный фон с виньеткой — создаёт глубину */
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(168, 85, 247, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0, 217, 255, 0.06), transparent 60%),
+    #05060D;
+  background-attachment: fixed;
+}
+
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2A3347; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #252A52; border-radius: 3px; }
 
-/* ——— Эффекты свечения ——— */
-.glow-accent {
+/* ═══════════ НЕОНОВЫЕ ЭФФЕКТЫ ═══════════ */
+
+.neon-glow {
   box-shadow:
-    0 0 24px rgba(6, 182, 212, 0.35),
-    0 0 80px rgba(6, 182, 212, 0.12);
+    0 0 12px rgba(168, 85, 247, 0.5),
+    0 0 40px rgba(168, 85, 247, 0.25),
+    0 0 80px rgba(168, 85, 247, 0.1);
 }
 
-.glow-success {
+.neon-glow-strong {
   box-shadow:
-    0 0 28px rgba(16, 185, 129, 0.4),
-    0 0 90px rgba(16, 185, 129, 0.15);
+    0 0 16px rgba(168, 85, 247, 0.7),
+    0 0 48px rgba(168, 85, 247, 0.4),
+    0 0 120px rgba(168, 85, 247, 0.2);
 }
 
-.glow-indigo {
+.neon-glow-lime {
   box-shadow:
-    0 0 24px rgba(6, 182, 212, 0.3),
-    0 0 60px rgba(6, 182, 212, 0.1);
+    0 0 14px rgba(57, 255, 20, 0.55),
+    0 0 48px rgba(57, 255, 20, 0.3),
+    0 0 100px rgba(57, 255, 20, 0.15);
 }
 
-/* ——— Анимации ——— */
-
-/* Пульсация круга подключения */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.92);
-    opacity: 0.9;
-  }
-  50% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1.08);
-    opacity: 0;
-  }
-}
-.animate-pulse-ring {
-  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-.animate-pulse-ring-delayed {
-  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  animation-delay: 1.2s;
+.neon-glow-electric {
+  box-shadow:
+    0 0 12px rgba(0, 217, 255, 0.5),
+    0 0 36px rgba(0, 217, 255, 0.25);
 }
 
-/* Медленная пульсация иконки */
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-.animate-pulse-slow {
-  animation: pulse-slow 2.8s ease-in-out infinite;
+.neon-text {
+  text-shadow:
+    0 0 8px rgba(168, 85, 247, 0.6),
+    0 0 20px rgba(168, 85, 247, 0.3);
 }
 
-/* Появление снизу */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in-up {
-  animation: fadeInUp 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+.neon-text-lime {
+  text-shadow:
+    0 0 10px rgba(57, 255, 20, 0.7),
+    0 0 28px rgba(57, 255, 20, 0.35);
 }
 
-/* Плавное появление */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+/* Legacy алиасы для старых классов */
+.glow-accent { box-shadow: 0 0 14px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2); }
+.glow-success { box-shadow: 0 0 14px rgba(57, 255, 20, 0.55), 0 0 40px rgba(57, 255, 20, 0.25); }
+.glow-indigo { box-shadow: 0 0 14px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.2); }
+
+/* ═══════════ ГРАДИЕНТЫ ═══════════ */
+
+.bg-gradient-neon {
+  background: linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #5B21B6 100%);
 }
 
-/* Shimmer для загрузки */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(6,182,212,0.12) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+.bg-gradient-lime {
+  background: linear-gradient(135deg, #6EFF4A 0%, #39FF14 50%, #10B981 100%);
 }
 
-/* Мягкое покачивание */
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-.animate-floaty {
-  animation: floaty 3.5s ease-in-out infinite;
+.bg-gradient-electric {
+  background: linear-gradient(135deg, #00D9FF 0%, #0891B2 100%);
 }
 
-/* Вращение для загрузки */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
-}
-
-/* Градиентная заливка текста */
-.text-gradient-accent {
-  background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 50%, #0891B2 100%);
+.text-gradient-neon {
+  background: linear-gradient(135deg, #C084FC 0%, #A855F7 50%, #7C3AED 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.text-gradient-success {
-  background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+.text-gradient-lime {
+  background: linear-gradient(135deg, #6EFF4A 0%, #39FF14 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Стеклянная поверхность */
-.glass {
-  background: rgba(20, 25, 37, 0.7);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+.text-gradient-accent { background: linear-gradient(135deg, #C084FC 0%, #A855F7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.text-gradient-success { background: linear-gradient(135deg, #6EFF4A 0%, #39FF14 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* ═══════════ ГРАДИЕНТНАЯ РАМКА ═══════════ */
+
+.neon-border {
+  position: relative;
+  background: linear-gradient(#0F1124, #0F1124) padding-box,
+              linear-gradient(135deg, #A855F7 0%, #00D9FF 100%) border-box;
+  border: 1px solid transparent;
 }
 
-/* Карточка с градиентной рамкой */
 .card-gradient-border {
   position: relative;
-  background: #141925;
+  background: #0F1124;
   border-radius: 20px;
 }
 .card-gradient-border::before {
@@ -193,7 +176,7 @@ html, body {
   position: absolute;
   inset: 0;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 182, 212, 0.15) 50%, rgba(34, 211, 238, 0.4) 100%);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.7) 0%, rgba(0, 217, 255, 0.25) 50%, rgba(168, 85, 247, 0.6) 100%);
   border-radius: inherit;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -202,19 +185,128 @@ html, body {
   pointer-events: none;
 }
 
-/* Активная зона нажатия */
+/* ═══════════ СТЕКЛЯННАЯ ПОВЕРХНОСТЬ ═══════════ */
+
+.glass {
+  background: rgba(15, 17, 36, 0.75);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+.glass-dark {
+  background: rgba(5, 6, 13, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+/* ═══════════ АНИМАЦИИ ═══════════ */
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.92); opacity: 0.95; }
+  50%  { transform: scale(1);    opacity: 0.5; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+.animate-pulse-ring         { animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.animate-pulse-ring-delayed { animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite; animation-delay: 1.2s; }
+
+@keyframes pulse-slow { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+.animate-pulse-slow { animation: pulse-slow 2.8s ease-in-out infinite; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right { animation: slideInRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+/* Skeleton shimmer — используется для плейсхолдеров */
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #151834 0%,
+    #1D2147 50%,
+    #151834 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s linear infinite;
+  border-radius: 8px;
+}
+
+/* Неоновая пульсация — для индикаторов */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 8px currentColor,
+      0 0 16px currentColor;
+    opacity: 1;
+  }
+  50% {
+    box-shadow:
+      0 0 4px currentColor,
+      0 0 8px currentColor;
+    opacity: 0.7;
+  }
+}
+.animate-neon-pulse { animation: neon-pulse 2s ease-in-out infinite; }
+
+/* Медленное вращение (для иконок) */
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+
+/* Плавание иконок */
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.animate-floaty { animation: floaty 3.5s ease-in-out infinite; }
+
+/* Shimmer для loading overlay */
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ═══════════ ИНТЕРАКЦИИ ═══════════ */
+
 .press {
-  transition: transform 0.12s ease, filter 0.12s ease;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.2s ease;
 }
 .press:active {
   transform: scale(0.97);
-  filter: brightness(0.95);
+  filter: brightness(0.92);
 }
 
-/* Скрытая подсветка для ховера */
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .hover-lift:hover {
   transform: translateY(-1px);
+}
+
+/* ═══════════ SAFE AREA ═══════════ */
+
+.safe-top    { padding-top: env(safe-area-inset-top, 0px); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.safe-x      { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+
+/* ═══════════ ТЕМА TELEGRAM ═══════════ */
+/* Принудительно тёмная тема независимо от настроек клиента */
+:root {
+  color-scheme: dark;
+}
+
+/* Отключаем iOS zoom при фокусе на input */
+input, textarea, select {
+  font-size: 16px;
 }
