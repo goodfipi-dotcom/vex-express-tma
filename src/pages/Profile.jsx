@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react'
 import {
-  UserCircleIcon,
   ChatBubbleLeftRightIcon,
-  ClockIcon,
   ArrowPathIcon,
+  ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline'
+import { CheckBadgeIcon } from '@heroicons/react/24/solid'
 import { getTransactions } from '../api/client'
 
 export default function Profile() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // Получаем данные пользователя из Telegram
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
   const userId = tgUser?.id || '—'
   const firstName = tgUser?.first_name || 'Пользователь'
+  const lastName = tgUser?.last_name || ''
+  const username = tgUser?.username
+
+  const initials =
+    (firstName?.[0] || '').toUpperCase() + (lastName?.[0] || '').toUpperCase()
 
   useEffect(() => {
     loadTransactions()
@@ -32,65 +36,100 @@ export default function Profile() {
   }
 
   function openSupport() {
-    // Открываем чат поддержки в Telegram
+    window.Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('light')
     window.Telegram?.WebApp?.openTelegramLink?.('https://t.me/vex_support')
   }
 
   return (
-    <div className="px-4 pt-6 pb-24 animate-fade-in-up">
-      {/* Аватар и имя */}
-      <div className="text-center mb-6">
-        <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-dark-700 border-2 border-dark-600 flex items-center justify-center">
-          <UserCircleIcon className="w-12 h-12 text-gray-500" />
+    <div className="px-5 pt-8 pb-28 animate-fade-in-up">
+      {/* Профиль */}
+      <div className="flex items-center gap-4 mb-7">
+        <div className="relative">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-accent-dim flex items-center justify-center text-white font-bold text-xl">
+            {initials || firstName?.[0]?.toUpperCase() || 'U'}
+          </div>
+          <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-surface flex items-center justify-center">
+            <CheckBadgeIcon className="w-5 h-5 text-accent" />
+          </div>
         </div>
-        <h2 className="text-xl font-bold text-white">{firstName}</h2>
-        <p className="text-gray-500 text-sm">ID: {userId}</p>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-white text-lg font-semibold truncate">
+            {firstName} {lastName}
+          </h2>
+          <p className="text-text-muted text-xs truncate">
+            {username ? `@${username}` : `ID: ${userId}`}
+          </p>
+        </div>
       </div>
 
-      {/* Транзакции */}
-      <div className="bg-dark-800 rounded-2xl border border-dark-600 p-4 mb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <ClockIcon className="w-5 h-5 text-indigo-400" />
-          <h3 className="text-white font-medium">История платежей</h3>
+      {/* История платежей */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <h3 className="text-text-dim text-xs font-semibold uppercase tracking-wider">
+            История
+          </h3>
+          {transactions.length > 0 && (
+            <span className="text-text-muted text-xs">
+              {transactions.length}
+            </span>
+          )}
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-4">
-            <ArrowPathIcon className="w-6 h-6 text-indigo-400 animate-spin" />
+          <div className="flex justify-center py-6 bg-surface rounded-2xl border border-border">
+            <ArrowPathIcon className="w-5 h-5 text-accent animate-spin" />
           </div>
         ) : transactions.length > 0 ? (
-          <div className="space-y-2">
+          <div className="bg-surface rounded-2xl border border-border overflow-hidden">
             {transactions.map((tx, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between bg-dark-700 rounded-xl p-3"
+                className={`flex items-center justify-between px-4 py-3.5 ${
+                  i < transactions.length - 1
+                    ? 'border-b border-border-soft'
+                    : ''
+                }`}
               >
-                <div>
-                  <p className="text-white text-sm">{tx.plan_name}</p>
-                  <p className="text-gray-500 text-xs">
-                    {new Date(tx.created_at).toLocaleDateString('ru-RU')}
+                <div className="min-w-0">
+                  <p className="text-white text-sm font-medium truncate">
+                    {tx.plan_name}
+                  </p>
+                  <p className="text-text-muted text-xs">
+                    {new Date(tx.created_at).toLocaleDateString('ru-RU', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
                   </p>
                 </div>
-                <span className="text-indigo-400 text-sm font-medium">
+                <span className="text-white text-sm font-semibold shrink-0 ml-3">
                   {tx.amount} ₽
                 </span>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-sm text-center py-4">
-            Платежей пока нет
-          </p>
+          <div className="bg-surface rounded-2xl border border-border p-6 text-center">
+            <p className="text-text-muted text-sm">Платежей пока нет</p>
+          </div>
         )}
       </div>
 
-      {/* Кнопка поддержки */}
+      {/* Поддержка */}
       <button
         onClick={openSupport}
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-dark-700 border border-dark-600 text-white font-medium hover:bg-dark-600 transition-colors active:scale-[0.98]"
+        className="w-full flex items-center justify-between px-4 py-4 rounded-2xl bg-surface border border-border press hover-lift"
       >
-        <ChatBubbleLeftRightIcon className="w-5 h-5 text-indigo-400" />
-        Связаться с поддержкой
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center">
+            <ChatBubbleLeftRightIcon className="w-5 h-5 text-accent" />
+          </div>
+          <div className="text-left">
+            <p className="text-white text-sm font-medium">Поддержка</p>
+            <p className="text-text-muted text-xs">Ответим за 5 минут</p>
+          </div>
+        </div>
+        <ArrowTopRightOnSquareIcon className="w-4 h-4 text-text-muted" />
       </button>
     </div>
   )

@@ -1,14 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark-900: #111827;
-  --color-dark-800: #1a1f2e;
-  --color-dark-700: #232938;
-  --color-dark-600: #2d3348;
-  --color-indigo-500: #4F46E5;
-  --color-indigo-400: #6366F1;
-  --color-indigo-600: #4338CA;
-  --color-indigo-900: #312E81;
+  /* Фон — глубокий тёмный */
+  --color-bg: #0B0F1A;
+  --color-surface: #141925;
+  --color-surface-2: #1D2433;
+  --color-surface-3: #252D3F;
+  --color-border: #2A3347;
+  --color-border-soft: #1F2636;
+
+  /* Текст */
+  --color-text: #F8FAFC;
+  --color-text-dim: #94A3B8;
+  --color-text-muted: #64748B;
+
+  /* Акцент — cyan (VPN-стиль) */
+  --color-accent: #06B6D4;
+  --color-accent-hover: #22D3EE;
+  --color-accent-dim: #0E7490;
+
+  /* Успех / подключено */
+  --color-success: #10B981;
+  --color-success-hover: #34D399;
+
+  /* Ошибка / отключено */
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+
+  /* Legacy алиасы (для обратной совместимости) */
+  --color-dark-900: #0B0F1A;
+  --color-dark-800: #141925;
+  --color-dark-700: #1D2433;
+  --color-dark-600: #252D3F;
+  --color-indigo-500: #06B6D4;
+  --color-indigo-400: #22D3EE;
+  --color-indigo-600: #0891B2;
+  --color-indigo-900: #0E7490;
 }
 
 * {
@@ -16,46 +43,178 @@
   padding: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  background-color: #111827;
-  color: #f3f4f6;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+html, body {
+  background-color: #0B0F1A;
+  color: #F8FAFC;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #1a1f2e; }
-::-webkit-scrollbar-thumb { background: #4F46E5; border-radius: 4px; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2A3347; border-radius: 3px; }
+
+/* ——— Эффекты свечения ——— */
+.glow-accent {
+  box-shadow:
+    0 0 24px rgba(6, 182, 212, 0.35),
+    0 0 80px rgba(6, 182, 212, 0.12);
+}
+
+.glow-success {
+  box-shadow:
+    0 0 28px rgba(16, 185, 129, 0.4),
+    0 0 90px rgba(16, 185, 129, 0.15);
+}
 
 .glow-indigo {
-  box-shadow: 0 0 20px rgba(79, 70, 229, 0.3), 0 0 60px rgba(79, 70, 229, 0.1);
+  box-shadow:
+    0 0 24px rgba(6, 182, 212, 0.3),
+    0 0 60px rgba(6, 182, 212, 0.1);
 }
 
+/* ——— Анимации ——— */
+
+/* Пульсация круга подключения */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.animate-pulse-ring-delayed {
+  animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 1.2s;
+}
+
+/* Медленная пульсация иконки */
 @keyframes pulse-slow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 .animate-pulse-slow {
-  animation: pulse-slow 3s ease-in-out infinite;
+  animation: pulse-slow 2.8s ease-in-out infinite;
 }
 
+/* Появление снизу */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
+/* Плавное появление */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Shimmer для загрузки */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(79,70,229,0.1) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(6,182,212,0.12) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
+}
+
+/* Мягкое покачивание */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.animate-floaty {
+  animation: floaty 3.5s ease-in-out infinite;
+}
+
+/* Вращение для загрузки */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Градиентная заливка текста */
+.text-gradient-accent {
+  background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 50%, #0891B2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-success {
+  background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Стеклянная поверхность */
+.glass {
+  background: rgba(20, 25, 37, 0.7);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* Карточка с градиентной рамкой */
+.card-gradient-border {
+  position: relative;
+  background: #141925;
+  border-radius: 20px;
+}
+.card-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 182, 212, 0.15) 50%, rgba(34, 211, 238, 0.4) 100%);
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Активная зона нажатия */
+.press {
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.press:active {
+  transform: scale(0.97);
+  filter: brightness(0.95);
+}
+
+/* Скрытая подсветка для ховера */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-1px);
 }

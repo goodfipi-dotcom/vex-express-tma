@@ -13,13 +13,14 @@ export default function App() {
     if (tg) {
       tg.ready()
       tg.expand()
-      tg.setHeaderColor('#111827')
-      tg.setBackgroundColor('#111827')
+      tg.setHeaderColor('#0B0F1A')
+      tg.setBackgroundColor('#0B0F1A')
+      tg.disableVerticalSwipes?.()
     }
   }, [])
 
   return (
-    <div className="min-h-screen bg-dark-900 max-w-lg mx-auto relative">
+    <div className="min-h-screen bg-bg max-w-lg mx-auto relative">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/plans" element={<Plans />} />
