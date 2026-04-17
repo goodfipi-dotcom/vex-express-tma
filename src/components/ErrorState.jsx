@@ -3,8 +3,8 @@ import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outl
 export default function ErrorState({ onRetry, message = 'Не удалось подключиться к серверу' }) {
   return (
     <div className="px-5 pt-16 pb-28 flex flex-col items-center text-center animate-fade-in">
-      <div className="w-16 h-16 rounded-2xl bg-danger/10 border border-danger/30 flex items-center justify-center mb-5">
-        <ExclamationTriangleIcon className="w-8 h-8 text-danger" />
+      <div className="w-16 h-16 rounded-2xl bg-neon/10 border border-neon/30 flex items-center justify-center mb-5">
+        <ExclamationTriangleIcon className="w-8 h-8 text-neon-hover" />
       </div>
       <h3 className="text-white text-lg font-semibold mb-2">Нет связи</h3>
       <p className="text-text-dim text-sm max-w-xs mb-6">{message}</p>

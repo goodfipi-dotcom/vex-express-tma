@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ShieldCheckIcon, BoltIcon } from '@heroicons/react/24/solid'
+import { ShieldCheckIcon } from '@heroicons/react/24/solid'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { getUserStatus } from '../api/client'
 import { HomeSkeleton } from '../components/Skeleton'
@@ -41,7 +41,7 @@ export default function Home() {
     try {
       await navigator.clipboard.writeText(status.vless_key)
       window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred?.('success')
-      window.Telegram?.WebApp?.showAlert?.('Ключ скопирован. Вставьте в приложение из раздела "Настройка".')
+      window.Telegram?.WebApp?.showAlert?.('Ключ скопирован. Вставьте в приложение из раздела «Настройка».')
     } catch { /* ок */ }
   }
 
@@ -59,79 +59,61 @@ export default function Home() {
   if (error)   return <ErrorState onRetry={loadStatus} />
 
   const active = !!status?.active
-  const expiresAt = status?.expires_at
-  const expiresStr = formatDate(expiresAt)
+  const expiresStr = formatDate(status?.expires_at)
 
   return (
-    <div className="px-6 pt-10 pb-36 animate-fade-in-up flex flex-col min-h-screen">
-      {/* Бренд-метка сверху */}
-      <div className="flex items-center justify-center gap-2 mb-10">
-        <div className="w-8 h-8 rounded-xl bg-gradient-neon flex items-center justify-center neon-glow">
-          <BoltIcon className="w-4 h-4 text-white" />
-        </div>
-        <span className="text-lg font-bold tracking-[0.24em] text-white">VEX</span>
-      </div>
-
-      {/* ═══ Гигантская центральная иконка-щит ═══ */}
-      <div className="relative flex items-center justify-center mb-8 mt-4" style={{ height: 240 }}>
-        {active && (
-          <>
-            <div className="absolute w-56 h-56 rounded-full bg-lime/15 animate-pulse-ring" />
-            <div className="absolute w-56 h-56 rounded-full bg-lime/15 animate-pulse-ring-delayed" />
-          </>
-        )}
+    <div className="px-6 pt-8 pb-40 flex flex-col">
+      {/* ═══ Гигантский центральный щит ═══ */}
+      <div className="relative flex items-center justify-center mt-4 mb-8" style={{ height: 220 }}>
+        <div className="absolute w-52 h-52 rounded-full bg-neon/10 animate-pulse-ring" />
+        <div className="absolute w-52 h-52 rounded-full bg-neon/10 animate-pulse-ring-delayed" />
         <div
-          className={`absolute w-56 h-56 rounded-full ${active ? 'bg-lime/5' : 'bg-neon/5'}`}
-          style={{
-            boxShadow: active
-              ? '0 0 80px rgba(57, 255, 20, 0.25) inset'
-              : '0 0 80px rgba(168, 85, 247, 0.22) inset',
-          }}
+          className="absolute w-52 h-52 rounded-full"
+          style={{ boxShadow: '0 0 80px rgba(168, 85, 247, 0.3) inset' }}
         />
         <div className="animate-floaty">
           <ShieldCheckIcon
-            className={`w-44 h-44 ${active ? 'text-lime neon-glow-lime' : 'text-neon'}`}
+            className="w-40 h-40 text-neon"
             style={{
-              filter: active
-                ? 'drop-shadow(0 0 24px rgba(57, 255, 20, 0.9)) drop-shadow(0 0 60px rgba(57, 255, 20, 0.5))'
-                : 'drop-shadow(0 0 24px rgba(168, 85, 247, 0.9)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.5))',
+              filter: 'drop-shadow(0 0 24px rgba(168, 85, 247, 0.9)) drop-shadow(0 0 60px rgba(168, 85, 247, 0.5))',
             }}
           />
         </div>
       </div>
 
-      {/* ═══ Статус одной жирной строкой ═══ */}
-      <div className="text-center mb-auto">
+      {/* ═══ Статус — bold дата + таблетка ═══ */}
+      <div className="flex flex-col items-center mb-10">
         {active && expiresStr ? (
           <>
-            <p className="text-text-dim text-sm mb-2">Подписка активна</p>
-            <h1 className="text-white text-[28px] font-bold tracking-tight leading-tight">
+            <h1 className="text-white text-[28px] font-bold tracking-tight leading-tight mb-3 text-center">
               до {expiresStr}
             </h1>
+            <span className="pill-status">подписка активна</span>
           </>
         ) : active ? (
-          <h1 className="text-white text-[28px] font-bold tracking-tight leading-tight">
+          <h1 className="text-white text-[28px] font-bold tracking-tight leading-tight mb-3 text-center">
             VPN подключён
           </h1>
         ) : (
           <>
-            <p className="text-text-dim text-sm mb-2">Подписка не активна</p>
-            <h1 className="text-white text-[28px] font-bold tracking-tight leading-tight">
-              Подключите VPN за 1 минуту
+            <h1 className="text-white text-[28px] font-bold tracking-tight leading-tight mb-3 text-center">
+              Подписка не активна
             </h1>
+            <span className="pill-status">подписка истекла</span>
           </>
         )}
       </div>
 
-      {/* ═══ Две кнопки pill в стиле Ultima ═══ */}
-      <div className="flex flex-col gap-3 mt-10">
+      {/* ═══ Две pill-кнопки (Ultima style) ═══ */}
+      <div className="flex flex-col gap-3">
         {active && status?.vless_key ? (
-          <button onClick={copyKey} className="btn-pill btn-pill-lime">
+          <button onClick={copyKey} className="btn-pill btn-pill-primary">
             Скопировать VPN-ключ
           </button>
         ) : (
           <button onClick={goToPlans} className="btn-pill btn-pill-primary">
-            Купить подписку от 150 ₽
+            <span className="flex-1 text-center">Купить подписку</span>
+            <span className="text-sm opacity-90">от 150 ₽</span>
           </button>
         )}
         <button onClick={goToGuide} className="btn-pill btn-pill-dark">

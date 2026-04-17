@@ -1,18 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
-  ChatBubbleLeftRightIcon,
   ChevronRightIcon,
-  ReceiptPercentIcon,
-  QuestionMarkCircleIcon,
   CreditCardIcon,
+  ClockIcon,
   GiftIcon,
+  KeyIcon,
+  ClipboardDocumentIcon,
 } from '@heroicons/react/24/outline'
-import { CheckBadgeIcon } from '@heroicons/react/24/solid'
-import { getTransactions } from '../api/client'
+import { getTransactions, getUserStatus } from '../api/client'
 import { ProfileSkeleton } from '../components/Skeleton'
 
 export default function Profile() {
+  const navigate = useNavigate()
   const [transactions, setTransactions] = useState([])
+  const [status, setStatus] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
@@ -24,14 +26,18 @@ export default function Profile() {
   const username = tgUser?.username
 
   const initials =
-    (firstName?.[0] || '').toUpperCase() +
+    (firstName?.[0] || 'V').toUpperCase() +
     (lastName?.[0] || '').toUpperCase()
 
   const load = useCallback(async () => {
     setError(false)
     try {
-      const data = await getTransactions()
-      setTransactions(data.transactions || [])
+      const [tx, st] = await Promise.all([
+        getTransactions().catch(() => ({ transactions: [] })),
+        getUserStatus().catch(() => null),
+      ])
+      setTransactions(tx.transactions || [])
+      setStatus(st)
     } catch {
       setError(true)
     } finally {
@@ -45,82 +51,78 @@ export default function Profile() {
     window.Telegram?.WebApp?.HapticFeedback?.impactOccurred?.(kind)
   }
 
-  function openSupport() {
-    hap('medium')
-    window.Telegram?.WebApp?.openTelegramLink?.('https://t.me/vex_support')
-  }
-
-  function openFAQ() {
+  function openPayments() {
     hap()
-    window.Telegram?.WebApp?.openTelegramLink?.('https://t.me/vex_support')
+    window.Telegram?.WebApp?.showAlert?.('Все доступные способы оплаты — Telegram, карта, СБП, Stars.')
   }
 
   function openRefs() {
     hap()
-    window.Telegram?.WebApp?.showAlert?.('Реферальная программа скоро появится.')
-  }
-
-  function openPayments() {
-    hap()
-    window.Telegram?.WebApp?.showAlert?.('Управление способами оплаты — в разработке.')
+    window.Telegram?.WebApp?.showAlert?.('Реферальная программа: +7 дней за каждого приглашённого друга. Скоро.')
   }
 
   function toggleHistory() {
     hap()
-    setShowHistory((v) => !v)
+    setShowHistory(v => !v)
+  }
+
+  async function copySubLink() {
+    const link = status?.vless_key || `https://t.me/vex_express_bot?startapp=ref_${userId}`
+    try {
+      await navigator.clipboard.writeText(link)
+      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred?.('success')
+      window.Telegram?.WebApp?.showAlert?.('Ссылка скопирована')
+    } catch { /* ок */ }
   }
 
   if (loading) return <ProfileSkeleton />
 
   return (
-    <div className="px-5 pt-8 pb-36 animate-fade-in-up">
-      {/* Шапка профиля */}
-      <div className="flex flex-col items-center mb-8">
-        <div className="relative mb-3">
-          <div className="w-20 h-20 rounded-full bg-gradient-neon neon-glow flex items-center justify-center text-white font-bold text-2xl">
-            {initials || firstName?.[0]?.toUpperCase() || 'V'}
-          </div>
-          <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 rounded-full bg-bg flex items-center justify-center">
-            <CheckBadgeIcon className="w-6 h-6 text-neon" />
+    <div className="px-5 pt-8 pb-40">
+      {/* ═══ Аватар + имя ═══ */}
+      <div className="card-glass flex items-center gap-4 p-4 mb-6">
+        <div className="relative">
+          <div className="w-14 h-14 rounded-full bg-gradient-neon neon-glow flex items-center justify-center text-white font-bold text-xl">
+            {initials}
           </div>
         </div>
-        <h2 className="text-white text-xl font-bold">
-          {firstName} {lastName}
-        </h2>
-        <p className="text-text-muted text-sm mt-0.5">
-          {username ? `@${username}` : `ID: ${userId}`}
-        </p>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-white text-base font-bold truncate">
+            {firstName} {lastName}
+          </h2>
+          <p className="text-text-muted text-xs truncate">
+            {username ? `@${username}` : `ID: ${userId}`}
+          </p>
+        </div>
       </div>
 
-      {/* Заголовок раздела */}
-      <p className="text-text-dim text-xs font-semibold uppercase tracking-[0.14em] mb-3 px-1">
+      {/* ═══ Заголовок секции ═══ */}
+      <p className="text-text-dim text-[11px] font-semibold uppercase tracking-[0.14em] mb-3 px-1">
         Настройки профиля
       </p>
 
-      {/* Стеклянные строки-настройки (как у Ultima) */}
-      <div className="card-glass overflow-hidden mb-6">
+      {/* ═══ Единый блок настроек (как у Ultima) ═══ */}
+      <div className="card-glass overflow-hidden mb-5">
         <Row
           icon={CreditCardIcon}
           title="Способы оплаты"
           subtitle="Карта, Telegram Stars, СБП"
-          accent="neon"
           onClick={openPayments}
           isFirst
         />
         <Row
-          icon={ReceiptPercentIcon}
+          icon={ClockIcon}
           title="История операций"
           subtitle={transactions.length ? `${transactions.length} ${plural(transactions.length, 'платёж', 'платежа', 'платежей')}` : 'Платежей пока нет'}
-          accent="electric"
           onClick={toggleHistory}
           expanded={showHistory}
         />
         {showHistory && (
-          <div className="bg-white/[0.02] border-t border-white/5">
+          <div className="bg-white/[0.025] border-t border-white/5">
             {error ? (
               <div className="p-5 text-center">
                 <p className="text-text-dim text-sm mb-3">Не удалось загрузить историю</p>
-                <button onClick={load} className="text-neon text-sm font-semibold press">
+                <button onClick={load} className="text-neon-hover text-sm font-semibold press">
                   Повторить
                 </button>
               </div>
@@ -156,52 +158,53 @@ export default function Profile() {
           icon={GiftIcon}
           title="Реферальная программа"
           subtitle="+7 дней за каждого друга"
-          accent="lime"
           onClick={openRefs}
-          isLast={false}
         />
         <Row
-          icon={ChatBubbleLeftRightIcon}
-          title="Поддержка"
-          subtitle="Ответим за 5 минут"
-          accent="neon"
-          onClick={openSupport}
-          isLast={false}
-        />
-        <Row
-          icon={QuestionMarkCircleIcon}
-          title="Частые вопросы"
-          subtitle="Ответы о подключении"
-          accent="electric"
-          onClick={openFAQ}
+          icon={KeyIcon}
+          title="Сохранение доступа"
+          subtitle="Ваш VPN-ключ привязан к Telegram"
+          onClick={() => window.Telegram?.WebApp?.showAlert?.('Ваш доступ сохранён. Откройте бота с другого устройства — всё продолжит работать.')}
           isLast
         />
       </div>
 
-      <p className="text-text-muted text-[11px] text-center">
+      {/* ═══ Ссылка на подписку (копируемая) ═══ */}
+      <button
+        onClick={copySubLink}
+        className="w-full card-glass flex items-center gap-3 px-4 py-3 press"
+      >
+        <div className="squircle squircle-soft">
+          <ClipboardDocumentIcon className="w-5 h-5" />
+        </div>
+        <div className="min-w-0 flex-1 text-left">
+          <p className="text-white text-sm font-semibold truncate">
+            {status?.vless_key ? 'Скопировать VPN-ключ' : 'Ваша ссылка-приглашение'}
+          </p>
+          <p className="text-text-muted text-xs truncate">
+            {status?.vless_key ? 'Одна ссылка — все устройства' : 'Пригласите друга и получите +7 дней'}
+          </p>
+        </div>
+        <ChevronRightIcon className="w-4 h-4 text-text-muted shrink-0" />
+      </button>
+
+      <p className="text-text-muted text-[11px] text-center mt-5">
         VEX VPN · версия 1.0
       </p>
     </div>
   )
 }
 
-function Row({ icon: Icon, title, subtitle, accent = 'neon', onClick, isFirst = false, isLast = false, expanded = false }) {
-  const accents = {
-    neon:     'bg-neon/15 border-neon/30 text-neon',
-    electric: 'bg-electric/15 border-electric/30 text-electric',
-    lime:     'bg-lime/15 border-lime/30 text-lime',
-  }
+function Row({ icon: Icon, title, subtitle, onClick, isFirst = false, isLast = false, expanded = false }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between gap-3 px-5 py-4 press ${
+      className={`w-full flex items-center justify-between gap-3 px-4 py-3.5 press ${
         isFirst ? '' : 'border-t border-white/5'
       }`}
     >
       <div className="flex items-center gap-3 min-w-0">
-        <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${accents[accent]}`}
-        >
+        <div className="squircle squircle-neon">
           <Icon className="w-5 h-5" />
         </div>
         <div className="text-left min-w-0">
@@ -210,9 +213,7 @@ function Row({ icon: Icon, title, subtitle, accent = 'neon', onClick, isFirst = 
         </div>
       </div>
       <ChevronRightIcon
-        className={`w-4 h-4 text-text-muted shrink-0 transition-transform ${
-          expanded ? 'rotate-90' : ''
-        }`}
+        className={`w-4 h-4 text-text-muted shrink-0 transition-transform ${expanded ? 'rotate-90' : ''}`}
       />
     </button>
   )

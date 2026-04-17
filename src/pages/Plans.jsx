@@ -42,7 +42,7 @@ export default function Plans() {
   }
 
   return (
-    <div className="px-5 pt-8 pb-36 animate-fade-in-up">
+    <div className="px-5 pt-8 pb-40">
       <div className="mb-6">
         <h2 className="text-[28px] font-bold text-white tracking-tight leading-tight mb-2">
           Выберите тариф
@@ -52,7 +52,7 @@ export default function Plans() {
         </p>
       </div>
 
-      <div className="space-y-4 mb-5">
+      <div className="space-y-5 mb-6">
         {PLANS.map((plan) => (
           <PlanCard
             key={plan.id}
@@ -65,8 +65,8 @@ export default function Plans() {
       </div>
 
       <div className="card-glass p-4 flex items-start gap-3 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-neon/15 border border-neon/30 flex items-center justify-center shrink-0">
-          <ShieldCheckIcon className="w-5 h-5 text-neon" />
+        <div className="squircle squircle-neon">
+          <ShieldCheckIcon className="w-5 h-5" />
         </div>
         <div>
           <p className="text-white text-sm font-semibold mb-0.5">Оплата через Telegram</p>
@@ -77,8 +77,8 @@ export default function Plans() {
       </div>
 
       <div className="card-glass p-4 flex items-start gap-3">
-        <div className="w-10 h-10 rounded-xl bg-electric/15 border border-electric/30 flex items-center justify-center shrink-0">
-          <CreditCardIcon className="w-5 h-5 text-electric" />
+        <div className="squircle squircle-soft">
+          <CreditCardIcon className="w-5 h-5" />
         </div>
         <div>
           <p className="text-white text-sm font-semibold mb-0.5">Любой способ оплаты</p>
