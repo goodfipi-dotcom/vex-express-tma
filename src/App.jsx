@@ -14,45 +14,67 @@ const deviceName = isIOS ? 'iOS' : 'Android'
 const REF_LINK = 'https://t.me/vexexpress_bot?start=ref_1758519441'
 
 const STYLES = `
+/*
+ * Easing tokens:
+ *  --ease-out-soft: мягкое затухание (наиболее "премиальное" ощущение)
+ *  --ease-in-out-soft: симметричное мягкое — для циклических blob'ов
+ *  --ease-spring: лёгкая «пружинка» на tap'ах
+ */
+:root {
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 @keyframes float-a {
-  0%, 100% { transform: translate(-10%, -10%) scale(1); opacity: 0.45; }
-  50%      { transform: translate(15%, 20%)   scale(1.25); opacity: 0.55; }
+  0%, 100% { transform: translate3d(-10%, -10%, 0) scale(1); opacity: 0.45; }
+  50%      { transform: translate3d(15%, 20%, 0)   scale(1.25); opacity: 0.55; }
 }
 @keyframes float-b {
-  0%, 100% { transform: translate(20%, 10%) scale(1.1); opacity: 0.35; }
-  50%      { transform: translate(-15%, 25%) scale(0.9); opacity: 0.5; }
+  0%, 100% { transform: translate3d(20%, 10%, 0) scale(1.1); opacity: 0.35; }
+  50%      { transform: translate3d(-15%, 25%, 0) scale(0.9); opacity: 0.5; }
 }
 @keyframes float-c {
-  0%, 100% { transform: translate(-20%, 20%) scale(0.95); opacity: 0.4; }
-  50%      { transform: translate(25%, -15%) scale(1.2); opacity: 0.55; }
+  0%, 100% { transform: translate3d(-20%, 20%, 0) scale(0.95); opacity: 0.4; }
+  50%      { transform: translate3d(25%, -15%, 0) scale(1.2); opacity: 0.55; }
 }
 @keyframes float-d {
-  0%, 100% { transform: translate(10%, -20%) scale(1); opacity: 0.3; }
-  50%      { transform: translate(-10%, 15%) scale(1.15); opacity: 0.45; }
+  0%, 100% { transform: translate3d(10%, -20%, 0) scale(1); opacity: 0.3; }
+  50%      { transform: translate3d(-10%, 15%, 0) scale(1.15); opacity: 0.45; }
 }
 @keyframes ripple {
   0%   { width: 240px; height: 240px; opacity: 0.6; }
   100% { width: 360px; height: 360px; opacity: 0; }
 }
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.35); }
-  50%      { box-shadow: 0 0 35px rgba(139,92,246,0.65); }
+  0%, 100% {
+    box-shadow:
+      0 8px 24px rgba(10, 0, 20, 0.55),
+      0 0 20px rgba(139, 92, 246, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  50% {
+    box-shadow:
+      0 12px 30px rgba(10, 0, 20, 0.6),
+      0 0 40px rgba(139, 92, 246, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
 }
 @keyframes spin-slow {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 @keyframes sheet-up {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
+  from { transform: translate3d(0, 100%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
 }
 @keyframes toast-in {
-  from { opacity: 0; transform: translate(-50%, -20px); }
-  to   { opacity: 1; transform: translate(-50%, 0); }
+  from { opacity: 0; transform: translate3d(-50%, -20px, 0); }
+  to   { opacity: 1; transform: translate3d(-50%, 0, 0); }
 }
 
 .aurora-blob {
@@ -61,6 +83,8 @@ const STYLES = `
   filter: blur(80px);
   pointer-events: none;
   will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .noise-overlay {
   position: fixed; inset: 0;
@@ -73,19 +97,51 @@ const STYLES = `
 .ripple-ring {
   position: absolute;
   top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(0);
   border-radius: 50%;
-  border: 1.5px solid rgba(139,92,246,0.4);
-  animation: ripple 3s ease-out infinite;
+  border: 1.5px solid rgba(139, 92, 246, 0.4);
+  animation: ripple 3s var(--ease-out-soft) infinite;
   pointer-events: none;
+  will-change: width, height, opacity;
 }
-.fade-in { animation: fade-up 200ms ease-out both; }
-.btn-glow { animation: glow-pulse 2.6s ease-in-out infinite; }
-.spin-arc { animation: spin-slow 4s linear infinite; }
+
+.fade-in    { animation: fade-up 280ms var(--ease-out-soft) both; }
+.btn-glow   { animation: glow-pulse 2.6s var(--ease-in-out-soft) infinite; }
+.spin-arc   { animation: spin-slow 4s linear infinite; transform: translateZ(0); will-change: transform; }
 
 .scroll-area::-webkit-scrollbar { width: 0; }
-.tap { transition: transform 120ms ease, background 160ms ease; }
+
+.tap {
+  transition:
+    transform 180ms var(--ease-spring),
+    background 200ms var(--ease-out-soft),
+    box-shadow 200ms var(--ease-out-soft);
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
 .tap:active { transform: scale(0.97); }
+
+/* CTA: мягкая двухслойная тень + лёгкий inner-highlight сверху */
+.cta-soft-shadow {
+  box-shadow:
+    0 8px 24px rgba(10, 0, 20, 0.55),
+    0 0 22px rgba(139, 92, 246, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.cta-soft-shadow:active {
+  box-shadow:
+    0 4px 14px rgba(10, 0, 20, 0.5),
+    0 0 16px rgba(139, 92, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Меньше движения для пользователей с prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .btn-glow, .spin-arc, .ripple-ring, .aurora-blob {
+    animation: none !important;
+  }
+  .tap { transition: none; }
+}
 `
 
 // ─── Aurora background ─────────────────────────────────────────
@@ -196,11 +252,10 @@ const PrimaryButton = ({ children, onClick, glow = false, style = {} }) => (
   <button
     type="button"
     onClick={onClick}
-    className={`w-full flex items-center justify-center gap-2 tap ${glow ? 'btn-glow' : ''}`}
+    className={`w-full flex items-center justify-center gap-2 tap ${glow ? 'btn-glow' : 'cta-soft-shadow'}`}
     style={{
       height: 56, borderRadius: 16,
       background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-      boxShadow: '0 0 22px rgba(139,92,246,0.35)',
       color: '#fff', fontWeight: 600, fontSize: 16,
       ...style,
     }}
@@ -481,11 +536,10 @@ function SupportScreen({ onFaq, onOtherDevice }) {
     <div className="fade-in flex flex-col gap-4" style={{ paddingTop: 4 }}>
       <div className="flex flex-col items-center" style={{ marginBottom: 12 }}>
         <div
-          className="flex items-center justify-center rounded-full"
+          className="flex items-center justify-center rounded-full cta-soft-shadow"
           style={{
             width: 72, height: 72, marginBottom: 16,
             background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-            boxShadow: '0 0 30px rgba(139,92,246,0.5)',
           }}
         >
           <MessageCircle size={32} color="#fff" />
